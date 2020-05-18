@@ -1,0 +1,417 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Guide · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    
+    <link rel="prev" href="prerequisites.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="prerequisites.html">
+            
+                <a href="prerequisites.html">
+            
+                    
+                    Prerequisites
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.3" data-path="guide.html">
+            
+                <a href="guide.html">
+            
+                    
+                    Guide
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" >
+            
+                <a target="_blank" href="https://devops.novalagung.com/en/cicd-serverless-ebook-gitbook-github-pages-actions-calibre.html">
+            
+                    
+                    Reference
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >Guide</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="guide">Guide</h1>
+<p><strong>Create a Github repo</strong></p>
+<p> First, create a new repo in your Github account, it can be a private one or public, doesn&apos;t matter. Just for the sake of this tutorial, I am going to pick <code>softwareengineering</code> as the repo name.</p>
+<p><img src="https://i.imgur.com/diIHwxE.png" alt=""></p>
+<p><strong>Create a new Gitbook project</strong></p>
+<p> Next, use <code>gitbook</code> command line to initialize a new project, name it anyhing. Here I&apos;ll use <code>softwareengineering</code>, the same one as the git repo name.</p>
+<p>After the project setup is finished, try to test it locally.</p>
+<pre><code class="lang-text">gitbook init softwareengineering
+cd softwareengineering
+gitbook serve
+</code></pre>
+<p><img src="https://i.imgur.com/99Q5kvv.png" alt=""></p>
+<p>As we can see from image above, the web version of the book is running up.</p>
+<p>Next, we are going to use Github Action plugin <a href="https://github.com/peaceiris/actions-gh-pages" target="_blank">peaceiris/actions-gh-pages</a> to automate pushing resources from git repo server to the <code>gh-pages</code>.</p>
+<p>To make this scenario happen, first, generate new key pair using <code>ssh-keygen</code> command below. We will use the keys as Github deploy key.</p>
+<pre><code class="lang-text">ssh-keygen -t rsa -b 4096 -C &quot;$(git config user.email)&quot; -f gh-pages -N &quot;&quot;
+# You will get 2 files:
+#   gh-pages.pub (public key)
+#   gh-pages     (private key)
+</code></pre>
+<p>The above command generates two files:</p>
+<ul>
+<li><code>gh-pages.pub</code> file as the public key</li>
+<li><code>gh-pages</code> file as the private key</li>
+</ul>
+<p>Upload these two files into repo&apos;s project keys and secret menu respectively. To do that, open the repo, click <strong>Settings</strong>, then do follow the steps below:</p>
+<p><img src="https://i.imgur.com/t8RVwN7.png" alt=""></p>
+<p><strong>Create Github workflow CI/CD file for generating the web version of the ebook</strong></p>
+<p>****</p>
+<p>Now we are going to make Github able to automatically deploy the web version of the ebook on every push. And we want that to be applied into the first push as well.</p>
+<p>Create a new workflow file named <code>deploy.yml</code>, place it in <code>&lt;yourproject&gt;/.github/workflows</code>, then fill it with the configuration below:</p>
+<pre><code class="lang-text"># file ./softwareengineering/.github/workflow/deploy.yml
+
+name: &apos;deploy website and ebooks&apos;
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  job_deploy_website:
+    name: &apos;deploy website&apos;
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: &apos;10.x&apos;
+    - name: &apos;Installing gitbook cli&apos;
+      run: npm install -g gitbook-cli
+    - name: &apos;Generating distributable files&apos;
+      run: |
+        gitbook install
+        gitbook build
+    - uses: peaceiris/actions-gh-pages@v2.5.0
+      env:
+        ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+        PUBLISH_BRANCH: gh-pages
+        PUBLISH_DIR: ./_book
+</code></pre>
+<p>In summary, the workflow above will do these things sequentially:</p>
+<ul>
+<li>Trigger this workflow on every push happens on <code>master</code> branch.</li>
+<li>Install <code>nodejs</code>.</li>
+<li>Install <code>gitbook</code> CLI.</li>
+<li>Build the project.</li>
+<li>use <code>peaceiris/actions-gh-pages</code> plugin to deploy the built result to <code>gh-pages</code> branch. The Github deploy key that we just uploaded is used by this plugin.</li>
+</ul>
+<p><strong>Push project to Github repo</strong></p>
+<pre><code class="lang-text">cd softwareengineering
+
+# ignore certain directory
+touch .gitignore
+echo &apos;_book&apos; &gt;&gt; .gitignore
+
+# init git repo
+git init
+git add .
+git commit -m &quot;init&quot;
+git remote add origin git@github.com:novalagung/softwareengineering.git
+
+# push
+git push origin master
+</code></pre>
+<p>Navigate to browser, open your Github repo, click <code>Actions</code>, watch a workflow process that currently is running.</p>
+<p><img src="https://i.imgur.com/SZfwqZs.png" alt=""></p>
+<p>After the workflow is complete, then try to open in the browser the following URL.</p>
+<pre><code class="lang-text"># https://&lt;github-username&gt;.github.io/&lt;repo-name&gt;
+https://novalagung.github.io/softwareengineering/
+</code></pre>
+<p><img src="https://i.imgur.com/HzCygaX.png" alt=""></p>
+<p> If you are still not sure about what is the valid URL, open <strong>Settings</strong> menu of your Github repo then scrolls down a little bit until <strong>Github Pages</strong> section appears. The Github Pages URL will appear there.</p>
+<p><img src="https://i.imgur.com/eD5BmPv.jpg" alt=""></p>
+<p><strong>Modify the workflow file to be able to generate the ebook files</strong></p>
+<p>Ok, now we will modify the workflow so it will be able to generate the ebook files (<code>.pdf</code>, <code>.epub</code>, and <code>.mobi</code>), not just the web version.</p>
+<p>Do open the previous <code>deploy.yml</code> file, add a new job called <code>job_deploy_ebooks</code>.</p>
+<pre><code class="lang-text"># file ./softwareengineering/.github/workflow/deploy.yml
+
+name: &apos;deploy website and ebooks&apos;
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  ebook_name: &apos;softwareengineeringtutorial&apos;
+
+jobs:
+  job_deploy_website:
+    # ...
+  job_deploy_ebooks:
+    name: &apos;deploy ebooks&apos;
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: &apos;10.x&apos;
+    - name: &apos;Installing gitbook cli&apos;
+      run: npm install -g gitbook-cli
+    - name: &apos;Installing calibre&apos;
+      run: |
+        sudo -v
+        wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sudo sh /dev/stdin
+    - name: &apos;Preparing for ebooks generations&apos;
+      run: |
+        gitbook install
+        mkdir _book
+    - name: &apos;Generating ebook in pdf&apos;
+      run: gitbook pdf ./ ./_book/${{ env.ebook_name }}.pdf
+    - name: &apos;Generating ebook in epub&apos;
+      run: gitbook epub ./ ./_book/${{ env.ebook_name }}.epub
+    - name: &apos;Generating ebook in mobi&apos;
+      run: gitbook mobi ./ ./_book/${{ env.ebook_name }}.mobi
+    - uses: peaceiris/actions-gh-pages@v2.5.0
+      env:
+        ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+        PUBLISH_BRANCH: ebooks
+        PUBLISH_DIR: ./_book
+</code></pre>
+<p>The previous <code>job_deploy_website</code> is responsible for generating the web-based version of the ebook. This newly created <code>job_deploy_ebooks</code> has different purpose, which is to generate the files version of the ebook (<code>.pdf</code>, <code>.epub</code>, <code>.mobi</code>). The generated files later will be pushed to a branch named <code>ebooks</code>. The processes will be done by <strong>Calibre</strong>.</p>
+<p>Ok, now let&apos;s push recent changes into upstream.</p>
+<pre><code class="lang-text">git add .
+git commit -m &quot;update&quot;
+git push origin master
+</code></pre>
+<p><img src="https://i.imgur.com/iXd7bnr.png" alt=""></p>
+<p>After the process complete, the ebooks will be available for download in these following URLs. Please adjust it to follow your Github profile and repo name.</p>
+<pre><code class="lang-text">https://github.com/novalagung/softwareengineering/raw/ebooks/softwareengineeringtutorial.pdf
+https://github.com/novalagung/softwareengineering/raw/ebooks/softwareengineeringtutorial.epub
+https://github.com/novalagung/softwareengineering/raw/ebooks/softwareengineeringtutorial.mobi
+</code></pre>
+<p>FYI! Since the ebook files are accessible through Github direct link, this means the visibility of the repo needs to be public (not private). If you want the repo to be in private but keep the files accessible, then do push the files into <code>gh-pages</code> branch.</p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="prerequisites.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Prerequisites">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Guide","level":"1.3","depth":1,"next":{"title":"Reference","level":"1.4","depth":1,"url":"https://devops.novalagung.com/en/cicd-serverless-ebook-gitbook-github-pages-actions-calibre.html","ref":"https://devops.novalagung.com/en/cicd-serverless-ebook-gitbook-github-pages-actions-calibre.html","articles":[]},"previous":{"title":"Prerequisites","level":"1.2","depth":1,"path":"prerequisites.md","ref":"prerequisites.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"guide.md","mtime":"2020-05-18T07:31:41.486Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-05-18T07:32:20.220Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
